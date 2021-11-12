@@ -1,0 +1,43 @@
+---
+
+  - name: reload systemd
+    systemd:
+      daemon_reload: yes
+    become: yes
+
+  - name: restart nomad
+    systemd:
+      name: nomad
+      state: restarted
+      enabled: yes
+    become: yes
+    listen: "restart nomad service"
+
+  - name: Ensure nomad is in running state
+    service:
+      name: nomad
+      state: started
+    become: yes
+    register: service_details
+    until: service_details.status.ActiveState == "active"
+    retries: 20
+    delay: 3
+    listen: "restart nomad service"
+
+  - name: Ensure nomad is listening
+    uri:
+      url: "http://{{ inventory_hostname }}:4646/ui"
+    register: result
+    until: result.status == 200
+    retries: 20
+    delay: 3
+    listen: "restart nomad service"
+
+  - name: reload nomad
+    systemd:
+      name: nomad
+      state: reloaded
+      enabled: yes
+    become: yes
+    listen: "reload nomad service"
+

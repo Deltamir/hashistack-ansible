@@ -1,0 +1,15 @@
+hashicorp_url: https://releases.hashicorp.com
+
+nomad_version: 1.1.6
+nomad_uri: nomad
+
+consul_version: 1.10.3
+consul_uri: consul
+
+vault_version: 1.8.4
+vault_uri: vault
+
+consul_template_version: 0.27.2
+consul_template_uri: consul-template
+consul_template_gossip_key_ttl: "1h"
+consul_template_cert_ttl: "24h"

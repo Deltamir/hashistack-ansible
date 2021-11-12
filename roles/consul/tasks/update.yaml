@@ -1,0 +1,50 @@
+---
+
+  - name: get consul checksums
+    uri:
+      url: "{{ hashicorp_url }}/{{ consul_uri }}/{{ consul_version }}/consul_{{ consul_version }}_SHA256SUMS"
+      return_content: true
+    become: true
+    register: checksums
+
+  - name: download consul binary
+    get_url:
+      url: "{{ hashicorp_url }}/{{ consul_uri }}/{{ consul_version }}/consul_{{ consul_version }}_linux_armhfv6.zip"
+      dest: "/opt/consul.zip"
+      checksum: "sha256:{{ item.split(' ').0 }}"
+      mode: 0777
+    when: item is search("armhfv6.zip")
+    with_items: "{{ checksums.content.split('\n') }}"
+    become: yes
+
+  - name: unzip consul library
+    unarchive:
+      src: "/opt/consul.zip"
+      dest: /usr/bin
+      remote_src: yes
+    become: yes
+    notify: "restart consul job"
+
+  - name: Set cap_sys_chroot+ep on /foo
+    capabilities:
+      path: /usr/bin/consul
+      capability: cap_net_bind_service=+ep
+      state: present
+    become: yes    
+
+  - name: Create job
+    community.general.nomad_job:
+      host: localhost
+      state: present
+      content: "{{ lookup('template', 'consul_job.hcl.j2') }}"
+      timeout: 120
+      use_ssl: no
+    run_once: true
+
+  - name: Ensure consul is listening
+    uri:
+      url: "http://{{ inventory_hostname }}:8500/ui"
+    register: result
+    until: result.status == 200
+    retries: 20
+    delay: 3

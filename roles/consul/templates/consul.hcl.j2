@@ -1,0 +1,21 @@
+
+server           =  true
+bootstrap_expect =  2
+datacenter       =  "dc1"
+data_dir         =  "/opt/consul"
+client_addr      =  "{{ inventory_hostname }}"
+retry_join       =  [{% for item in groups['all'] %}"{{ item }}",{% endfor %}]
+
+connect {
+  enabled = true
+}
+
+ui_config {
+  enabled = true
+}
+
+ports {
+  dns = 53
+}
+
+recursors = ["192.168.1.1"]

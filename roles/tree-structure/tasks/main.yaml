@@ -1,0 +1,99 @@
+---
+
+  - name: create nomad user
+    user:
+      name: nomad
+      shell: /bin/false
+      home: /etc/nomad.d
+      create_home: yes
+      system: yes
+    become: yes
+
+  - name: create nomad user
+    user:
+      name: consul
+      shell: /bin/false
+      home: /etc/consul.d
+      create_home: yes
+      system: yes
+    become: yes
+
+  - name: create vault user
+    user:
+      name: vault
+      shell: /bin/false
+      home: /etc/vault.d
+      create_home: yes
+      system: yes
+    become: yes
+
+  - name: Make sure 'wheel' group is present
+    group:
+      name: wheel
+      state: present
+    become: yes
+
+  - name: Allow 'wheel' group to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%wheel'
+      line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+    become: yes
+
+  - name: Add nomad users to sudo group
+    user:
+      name: nomad
+      groups: wheel
+      append: yes
+      state: present
+    become: yes
+    notify: reboot server
+
+  - name: create nomad data dir
+    file:
+      path: /opt/nomad
+      state: directory
+      recurse: yes
+      owner: nomad
+      group: nomad
+    become: yes
+
+  - name: create vault conf dir
+    file:
+      path: /etc/vault.d
+      state: directory
+      recurse: yes
+      owner: vault
+      group: vault
+    become: yes
+
+  - name: create consul conf dir
+    file:
+      path: /etc/consul.d
+      state: directory
+      recurse: yes
+      owner: consul
+      group: consul
+    become: yes
+
+  - name: create consul-template data dir for consul
+    file:
+      path: /opt/consul/templates
+      state: directory
+      recurse: yes
+      owner: nomad
+      group: nomad
+    become: yes
+
+  - name: create consul-template data dir for nomad
+    file:
+      path: /opt/nomad/templates
+      state: directory
+      recurse: yes
+      owner: nomad
+      group: nomad
+    become: yes
+
+

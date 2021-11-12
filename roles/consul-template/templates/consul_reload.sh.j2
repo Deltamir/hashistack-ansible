@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+echo "==========BEGIN CERTIFICATE KEY ROTATION=========="
+
+# Setup Consul address info
+export CONSUL_HTTP_ADDR="http://{{ inventory_hostname }}:8500"
+
+date
+consul reload
+echo "Tidying certificate store"
+curl -s --header "X-Vault-Token: {{ root_token }}" --data '{"tidy_cert_store": true, "tidy_revoked_certs": true, "safety_buffer": "{{ consul_template_cert_ttl }}"}' --request POST http://{{ inventory_hostname }}:8200/v1/pki_int_consul/tidy > /dev/null
+curl -s --header "X-Vault-Token: {{ root_token }}" --data '{"tidy_cert_store": true, "tidy_revoked_certs": true, "safety_buffer": "{{ consul_template_cert_ttl }}"}' --request POST http://{{ inventory_hostname }}:8200/v1/pki/tidy > /dev/null
+
+echo "==========END CERTIFICATE KEY ROTATION=========="

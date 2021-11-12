@@ -1,0 +1,4 @@
+---
+
+- import_playbook: init.yaml
+- import_playbook: update.yaml

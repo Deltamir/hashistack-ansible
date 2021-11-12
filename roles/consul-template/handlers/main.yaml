@@ -1,0 +1,23 @@
+---
+
+ - name: stop consul-template
+   community.general.nomad_job:
+     host: localhost
+     state: absent
+     name: consul-template-job
+     timeout: 120
+     use_ssl: no
+   listen: "restart consul-template job"
+   run_once: true
+
+ - name: start consul-template
+   community.general.nomad_job:
+     host: localhost
+     state: present
+     name: consul-template-job
+     timeout: 120
+     use_ssl: no
+     force_start: yes
+   listen: "restart consul-template job"
+   run_once: true
+

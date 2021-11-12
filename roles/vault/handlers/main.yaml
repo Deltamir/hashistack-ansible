@@ -1,0 +1,37 @@
+---
+
+ - name: stop vault
+   community.general.nomad_job:
+     host: localhost
+     state: absent
+     name: vault-job
+     timeout: 120
+     use_ssl: no
+   listen: "restart vault job"
+   run_once: true
+
+ - name: start vault
+   community.general.nomad_job:
+     host: localhost
+     state: present
+     name: vault-job
+     timeout: 120
+     use_ssl: no
+     force_start: yes
+   listen: "restart vault job"
+   run_once: true
+
+ - name: Ensure vault is listening
+   uri:
+     url: "http://{{ inventory_hostname }}:8200/ui"
+   register: result
+   until: result.status == 200
+   retries: 20
+   delay: 3
+   listen:  "restart vault job"
+
+ - name: Unseal Vault
+   hashivault_unseal:
+     keys: "{{ unseal_keys }}"
+     url: "http://{{ inventory_hostname }}:8200"
+   listen: "restart vault job"

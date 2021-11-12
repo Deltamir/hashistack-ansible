@@ -1,0 +1,77 @@
+job "consul-template-job" {
+  datacenters = ["dc1"]
+  type = "service"
+
+  group "consul-gossip-rotation-group" {
+    count = 1
+	
+    task "gossip-rotation-task" {
+      driver = "raw_exec"
+
+      config {
+        command = "/usr/bin/consul-template"
+        args = ["-config", "/opt/consul/templates/consul_gossip_rotation.hcl"]
+      }
+	  
+      service {
+        name = "consul-gossip-rotation"
+      }
+
+    }
+  }
+  group "consul-cert-rotation-group" {
+    count = 2
+
+    task "cert-rotation-task" {
+      driver = "raw_exec"
+
+      config {
+        command = "/usr/bin/consul-template"
+        args = ["-config", "/opt/consul/templates/consul_cert_rotation.hcl"]
+      }
+
+      service {
+        name = "consul-cert-rotation"
+      }
+
+    }
+  }
+
+  group "nomad-cert-rotation-group" {
+    count = 2
+
+    task "nomad-cert-rotation-task" {
+      driver = "raw_exec"
+
+      config {
+        command = "/usr/bin/consul-template"
+        args = ["-config", "/opt/nomad/templates/nomad_cert_rotation.hcl"]
+      }
+
+      service {
+        name = "nomad-cert-rotation"
+      }
+
+    }
+  }
+
+  group "nomad-gossip-rotation-group" {
+    count = 1
+
+    task "nomad-gossip-rotation-task" {
+      driver = "raw_exec"
+
+      config {
+        command = "/usr/bin/consul-template"
+        args = ["-config", "/opt/nomad/templates/nomad_gossip_rotation.hcl"]
+      }
+
+      service {
+        name = "nomad-gossip-rotation"
+      }
+
+    }
+  }
+
+
+}

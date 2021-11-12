@@ -1,0 +1,30 @@
+---
+
+  - name: Copy consul conf file to temp
+    template:
+      src: consul.hcl.j2
+      dest: /etc/consul.d/consul.hcl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: reload consul
+
+  - name: generate a consul encyption key
+    local_action:
+      module: command
+      cmd: consul keygen
+    register: encryption_key
+    run_once: yes
+    changed_when: false
+
+  - name: Copy consul encryption key to temp
+    template:
+      src: gossip.hcl.j2
+      dest: /etc/consul.d/gossip.hcl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+      force: no
+    become: yes
+    notify: reload consul

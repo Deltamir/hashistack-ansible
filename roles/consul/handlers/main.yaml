@@ -1,0 +1,37 @@
+---
+
+ - name: stop consul
+   community.general.nomad_job:
+     host: localhost
+     state: absent
+     name: consul-job
+     timeout: 120
+     use_ssl: no
+   listen: "restart consul job"
+   run_once: true
+
+ - name: start consul
+   community.general.nomad_job:
+     host: localhost
+     state: present
+     name: consul-job
+     timeout: 120
+     use_ssl: no
+     force_start: yes
+   listen: "restart consul job"
+   run_once: true
+
+ - name: Ensure consul is listening
+   uri:
+     url: "http://{{ inventory_hostname }}:8500/ui"
+   register: result
+   until: result.status == 200
+   retries: 20
+   delay: 3
+   listen: "restart consul job"
+
+ - name: reload consul
+   command: consul reload
+   environment:
+     CONSUL_HTTP_ADDR: "http://{{ inventory_hostname }}:8500"
+    

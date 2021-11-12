@@ -1,0 +1,47 @@
+job "consul-job" {
+  datacenters = ["dc1"]
+  type = "system"
+
+  group "consul-group" {
+    count = 1
+	
+    task "consul-task" {
+      driver = "raw_exec"
+
+      config {
+        command = "/usr/bin/consul"
+        args = [ "agent",
+                 "-config-dir", "/etc/consul.d/"
+        ]
+      }
+	  
+      service {
+        name = "consul"
+      }
+
+      resources {
+        network {
+          mbits = 10
+          port "consul_server" {
+            static = "8300"
+          }
+          port "consul_serf_lan" {
+            static = "8301"
+          }
+          port "consul_serf_wan" {
+            static = "8302"
+          }
+          port "consul_rpc" {
+            static = "8400"
+          }
+          port "consul_http" {
+            static = "8500"
+          }
+          port "consul_dns" {
+            static = "53"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+---
+
+- name: import conf update task
+  import_tasks: configuration.yaml
+- name: import bin update task
+  import_tasks: update.yaml

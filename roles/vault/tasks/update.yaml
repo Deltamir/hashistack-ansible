@@ -1,0 +1,18 @@
+---
+
+  - name: Create job
+    community.general.nomad_job:
+      host: localhost
+      state: present
+      content: "{{ lookup('template', 'vault_job.hcl.j2') }}"
+      timeout: 120
+      use_ssl: no
+    run_once: true
+
+  - name: Ensure vault is listening
+    uri:
+      url: "http://{{ inventory_hostname }}:8200/ui"
+    register: result
+    until: result.status == 200
+    retries: 20
+    delay: 3

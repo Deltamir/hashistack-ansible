@@ -1,0 +1,51 @@
+---
+
+  - name: generate a nomad encyption key
+    local_action:
+      module: command
+      cmd: nomad operator keygen
+    register: nomad_encryption_key
+    run_once: yes
+    changed_when: false
+
+  - name: Copy server config files to temp
+    template:
+      src: server.hcl.j2
+      dest: /etc/nomad.d/server.hcl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "reload nomad service"
+
+  - name: Copy client config files to temp
+    template:
+      src: client.hcl.j2
+      dest: /etc/nomad.d/client.hcl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "reload nomad service"
+
+  - name: Copy nomad config files to temp
+    template:
+      src: nomad.hcl.j2
+      dest: /etc/nomad.d/nomad.hcl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "reload nomad service"
+
+  - name: Copy service files to temp
+    template:
+      src: nomad.service.j2
+      dest: /etc/systemd/system/nomad.service
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: 
+      - reload systemd
+      - "reload nomad service"

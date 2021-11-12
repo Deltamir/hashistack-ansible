@@ -1,0 +1,4 @@
+{% raw %}{{ with secret "pki_int_consul/issue/consul-dc1" "common_name=server.dc1.consul" "ttl={% endraw %}{{ consul_template_cert_ttl }}{% raw %}" }}
+{{ .Data.issuing_ca }}
+{{ end }}
+{% endraw %}

@@ -1,0 +1,8 @@
+---
+
+- name: import init task
+  import_tasks: init.yaml
+- name: import configuration task
+  import_tasks: configuration.yaml
+- name: import update task
+  import_tasks: update.yaml

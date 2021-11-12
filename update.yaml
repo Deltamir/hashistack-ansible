@@ -1,0 +1,9 @@
+---
+
+- hosts: all
+  roles:
+   - nomad
+   - consul
+   - vault
+   - consul-template
+   - pki

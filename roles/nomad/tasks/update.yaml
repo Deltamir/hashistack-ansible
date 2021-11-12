@@ -1,0 +1,52 @@
+---
+
+  - name: get nomad checksums
+    uri: 
+      url: "{{ hashicorp_url }}/{{ nomad_uri }}/{{ nomad_version }}/nomad_{{ nomad_version }}_SHA256SUMS"
+      return_content: true
+    become: true
+    register: checksums
+
+  - name: download nomad binary
+    get_url:
+      url: "{{ hashicorp_url }}/{{ nomad_uri }}/{{ nomad_version }}/nomad_{{ nomad_version }}_linux_arm.zip"
+      dest: "/opt/nomad.zip"
+      checksum: "sha256:{{ item.split(' ').0 }}"
+      mode: 0777
+    when: item is search("arm.zip")
+    with_items: "{{ checksums.content.split('\n') }}"
+    become: yes
+
+  - name: unzip nomad library
+    unarchive:
+      src: "/opt/nomad.zip"
+      dest: /usr/bin
+      remote_src: yes
+    become: yes
+    notify: "restart nomad service"
+
+  - name: ensure nomad is started
+    systemd:
+      name: nomad
+      state: started
+      enabled: yes
+    become: yes
+
+  - name: Ensure nomad is in running state
+    service:
+      name: nomad
+      state: started
+    become: yes
+    register: service_details
+    until: service_details.status.ActiveState == "active"
+    retries: 20
+    delay: 3
+
+  - name: Ensure nomad is listening
+    uri:
+      url: "http://{{ inventory_hostname }}:4646/ui"
+    register: result
+    until: result.status == 200
+    retries: 20
+    delay: 3
+    

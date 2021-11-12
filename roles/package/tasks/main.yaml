@@ -1,0 +1,19 @@
+---
+
+  - name: Ensure server is up to date and a list of packages installed
+    apt:
+      force_apt_get: yes
+      update_cache: yes
+      pkg:
+      - unzip
+      - jq
+      - curl
+    become: yes
+
+  - name: install mandatory python package
+    pip:
+      name:
+        - python-nomad
+        - hvac
+      extra_args: --user
+      executable: pip3

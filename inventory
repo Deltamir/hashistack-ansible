@@ -1,0 +1,8 @@
+[server1]
+192.168.1.31 name=raspberrypi-1
+
+[server2]
+192.168.1.32 name=raspberrypi-2
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3

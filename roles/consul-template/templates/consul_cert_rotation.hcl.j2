@@ -1,0 +1,26 @@
+vault {
+  address      = "http://{{ inventory_hostname }}:8200"
+  token        = "{{ root_token }}"
+  unwrap_token = false
+  renew_token  = false
+}
+
+template {
+  source      = "/opt/consul/templates/agent.crt.tpl"
+  destination = "/opt/consul/agent-certs/agent.crt"
+  perms       = 0700
+  command     = "/opt/consul_reload.sh"
+}
+
+template {
+  source      = "/opt/consul/templates/agent.key.tpl"
+  destination = "/opt/consul/agent-certs/agent.key"
+  perms       = 0700
+  command     = "/opt/consul_reload.sh"
+}
+
+template {
+  source      = "/opt/consul/templates/ca.crt.tpl"
+  destination = "/opt/consul/agent-certs/ca.crt"
+  command     = "/opt/consul_reload.sh"
+}

@@ -1,0 +1,25 @@
+server {
+  enabled          = true
+  bootstrap_expect = 2
+
+  server_join {
+    retry_join = [{% for item in groups['all'] %}"{{ item }}:4648",{% endfor %}]
+  }
+
+  encrypt = "{{ nomad_encryption_key.stdout }}"
+}
+
+plugin "raw_exec" {
+  config {
+    enabled = true
+  }
+}
+
+consul {
+  address             = "{{ inventory_hostname }}:8500"
+  server_service_name = "nomad"
+  client_service_name = "nomad-client"
+  auto_advertise      = true
+  server_auto_join    = false
+  client_auto_join    = false
+}

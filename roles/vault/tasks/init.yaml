@@ -1,0 +1,26 @@
+---
+
+ - name: init Vault
+   hashivault_init:
+     secret_shares: 1
+     secret_threshold: 1
+     url: "http://{{ inventory_hostname }}:8200"
+   register: vault_init
+   run_once: yes
+
+ - name: write keys and token
+   local_action:
+     module: copy
+     content: "unseal_keys{{':'}} \"{{ vault_init['keys_base64'][0] }}\"{{ '\n' }}root_token{{':'}} \"{{ vault_init['root_token'] }}\""
+     dest: group_vars/secret_values
+   run_once: yes
+   when: vault_init['changed'] == true
+
+ - name: include vars
+   include_vars:
+     file: group_vars/secret_values
+
+ - name: Unseal Vault
+   hashivault_unseal:
+     keys: "{{ unseal_keys }}"
+     url: "http://{{ inventory_hostname }}:8200"

@@ -1,0 +1,27 @@
+vault {
+  address      = "http://{{ inventory_hostname }}:8200"
+  token        = "{{ root_token }}"
+  unwrap_token = false
+  renew_token  = false
+}
+
+template {
+  source      = "/opt/nomad/templates/server_agent.crt.tpl"
+  destination = "/opt/nomad/agent-certs/server_agent.crt"
+  perms       = 0700
+  command     = "/opt/nomad_reload.sh"
+}
+
+template {
+  source      = "/opt/nomad/templates/server_agent.key.tpl"
+  destination = "/opt/nomad/agent-certs/server_agent.key"
+  perms       = 0700
+  command     = "/opt/nomad_reload.sh"
+}
+
+template {
+  source      = "/opt/nomad/templates/server_ca.crt.tpl"
+  destination = "/opt/nomad/agent-certs/server_ca.crt"
+  command     = "/opt/nomad_reload.sh"
+}
+

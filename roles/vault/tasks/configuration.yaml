@@ -1,0 +1,11 @@
+---
+
+  - name: Copy vault conf file to temp
+    template:
+      src: vault.hcl.j2
+      dest: /etc/vault.d/vault.hcl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart vault job"

@@ -1,0 +1,162 @@
+---
+
+  - name: Copy consul-template consul gossip rotation conf file
+    template:
+      src: consul_gossip_rotation.hcl.j2
+      dest: /opt/consul/templates/consul_gossip_rotation.hcl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"    
+
+  - name: Copy consul-template nomad gossip rotation conf file
+    template:
+      src: nomad_gossip_rotation.hcl.j2
+      dest: /opt/nomad/templates/nomad_gossip_rotation.hcl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy consul-template consul cert rotation conf file
+    template:
+      src: consul_cert_rotation.hcl.j2
+      dest: /opt/consul/templates/consul_cert_rotation.hcl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy consul-template nomad cert rotation conf file
+    template:
+      src: nomad_cert_rotation.hcl.j2
+      dest: /opt/nomad/templates/nomad_cert_rotation.hcl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy consul gossip_key tpl file to temp
+    copy:
+      src: consul_gossip.key.tpl
+      dest: /opt/consul/templates/gossip.key.tpl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"      
+
+  - name: Copy nomad gossip_key tpl file to temp
+    copy:
+      src: nomad_gossip.key.tpl
+      dest: /opt/nomad/templates/gossip.key.tpl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy consul rotate_key script to temp
+    template:
+      src: consul_rotate_key.sh.j2
+      dest: /opt/consul_rotate_key.sh
+      owner: nomad
+      group: nomad
+      mode: '0744'
+    become: yes
+    notify: "restart consul-template job"      
+
+  - name: Copy nomad rotate_key script to temp
+    template:
+      src: nomad_rotate_key.sh.j2
+      dest: /opt/nomad_rotate_key.sh
+      owner: nomad
+      group: nomad
+      mode: '0744'
+    become: yes
+    notify: "restart consul-template job"
+
+
+  - name: Copy consul agent cert tpl file to temp
+    template:
+      src: consul_agent.crt.tpl.j2
+      dest: /opt/consul/templates/agent.crt.tpl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy consul agent key tpl file to temp
+    template:
+      src: consul_agent.key.tpl.j2
+      dest: /opt/consul/templates/agent.key.tpl      
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy consul ca cert tpl file to temp
+    template:
+      src: consul_ca.crt.tpl.j2
+      dest: /opt/consul/templates/ca.crt.tpl      
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy consul_reload script to temp
+    template:
+      src: consul_reload.sh.j2
+      dest: /opt/consul_reload.sh
+      owner: nomad
+      group: nomad
+      mode: '0744'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy nomad server agent cert tpl file to temp
+    template:
+      src: nomad_server_agent.crt.tpl.j2
+      dest: /opt/nomad/templates/server_agent.crt.tpl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy nomad server agent key tpl file to temp
+    template:
+      src: nomad_server_agent.key.tpl.j2
+      dest: /opt/nomad/templates/server_agent.key.tpl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy nomad server ca cert tpl file to temp
+    template:
+      src: nomad_server_ca.crt.tpl.j2
+      dest: /opt/nomad/templates/server_ca.crt.tpl
+      owner: nomad
+      group: nomad
+      mode: '0644'
+    become: yes
+    notify: "restart consul-template job"
+
+  - name: Copy nomad_reload script to temp
+    template:
+      src: nomad_reload.sh.j2
+      dest: /opt/nomad_reload.sh
+      owner: nomad
+      group: nomad
+      mode: '0744'
+    become: yes
+    notify: "restart consul-template job"

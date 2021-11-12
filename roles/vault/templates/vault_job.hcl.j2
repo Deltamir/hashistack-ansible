@@ -1,0 +1,41 @@
+job "vault-job" {
+  datacenters = ["dc1"]
+  type = "system"
+
+  group "vault-group" {
+    count = 1
+	
+    task "vault-task" {
+      driver = "raw_exec"
+
+      config {
+        command = "/usr/bin/vault"
+        args = [ "server",
+		 "-config", "/etc/vault.d/vault.hcl"
+        ]
+      }
+	  
+      artifact {
+	source = "{{ hashicorp_url }}/{{ vault_uri }}/{{ vault_version }}/vault_{{ vault_version }}_linux_arm.zip"
+	destination = "/usr/bin/"
+      }
+
+      service {
+        name = "consul"
+      }
+
+      resources {
+        network {
+          mbits = 10
+          port "vault_server" {
+            static = "8200"
+          }
+          port "vault_serf_lan" {
+            static = "8201"
+          }
+
+        }
+      }
+    }
+  }
+}
