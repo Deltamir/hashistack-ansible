@@ -1,2 +1,3 @@
 /.idea/
 /group_vars/secret_values
+/private_key/
